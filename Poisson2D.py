@@ -208,11 +208,6 @@ plt.show()
 #
 u = la.solve(A, rhs)
 
-print(u)
-
-print(y)     
-print(x)     
-
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
@@ -228,7 +223,7 @@ ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
 # Add a color bar which maps values to colors.
 fig.colorbar(surf, shrink=0.7, aspect=9)
-  
+plt.title('The solution $U$')  
 plt.show()
 
 #############################
@@ -255,5 +250,5 @@ ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
 # Add a color bar which maps values to colors.
 fig.colorbar(surf, shrink=0.7, aspect=9)
-  
+plt.title('The exact solution $U_{exact}$')
 plt.show()
