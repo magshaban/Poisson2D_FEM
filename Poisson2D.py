@@ -55,7 +55,10 @@ print( '' )
 for i in range ( 0, node_linear_num ):
    print( '  %d  %f' %( i, grid[i] ) )
 
-
+#
+#  Set up a quadrature rule.
+#  This rule is defined on the reference interval [0,1].
+#
 quad_num = 3
 
 quad_point = np.array (( \
@@ -194,8 +197,32 @@ for j in range ( 0, node_linear_num ):
 
       v = v + 1
  
-#print(A)    
 
+#
+#  Solve the linear system.
+#
+u = la.solve(A, rhs)
+
+
+def exact_fn(x, y):
+  value = x * ( 1.0 - x ) * y * ( 1.0 - y )
+  return value
+    
+u_exact = exact_fn(x, y)
+
+#
+#  Compare the solution and the error at the nodes.
+#
+print ( '' )
+print ( '   Node    x         y              u               u_exact' )
+print ( '' )
+v = 0
+for j in range ( 0, node_linear_num ):
+     for i in range ( 0, node_linear_num ):
+     
+      print ( ' %4d  %8f  %8f  %14g  %14g' % ( v, x[v], y[v], u[v], u_exact[v] ) )
+      v = v + 1
+      
 #to plot the mass matrix 
 fig, (ax1, ax2) = plt.subplots(1, 2)
 fig.suptitle('The Stiffness Matrix with BC')
@@ -203,10 +230,7 @@ ax1.matshow(A)
 ax2.spy(A)
 plt.show()
 
-#
-#  Solve the linear system.
-#
-u = la.solve(A, rhs)
+
 
 
 fig = plt.figure()
@@ -226,21 +250,38 @@ fig.colorbar(surf, shrink=0.7, aspect=9)
 plt.title('The solution $U$')  
 plt.show()
 
+from matplotlib.colors import LogNorm
+
+x_list = x
+y_list = y
+z_list = u
+N = int(len(u) ** .5)
+z = u.reshape(N, N)
+plt.title('The solution $u$ from above')
+plt.imshow(z, extent=(np.amin(x_list),
+                      np.amax(x_list),
+                      np.amin(y_list),
+                      np.amax(y_list)),
+        norm=LogNorm(), aspect='auto')
+#plt.colorbar()
+plt.show()
+
+
+
 #############################
 #
 # The Exact solution 
 #
-def exact_fn(x, y):
-  value = x * ( 1.0 - x ) * y * ( 1.0 - y )
-  return value
-    
-u_exact = exact_fn(x, y)
+
 fig = plt.figure()
 ax = fig.gca(projection='3d')
   
 ## Make data.
 z = u_exact
-
+#############################
+#
+# The Exact solution 
+#
 # Plot the surface.
 surf = ax.plot_trisurf(x, y, z, cmap=cm.Spectral,linewidth=0, antialiased=False)
 
@@ -252,3 +293,10 @@ ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 fig.colorbar(surf, shrink=0.7, aspect=9)
 plt.title('The exact solution $U_{exact}$')
 plt.show()
+
+
+#
+#  Terminate.
+#
+print ( '' )
+print ( '  Normal end of execution.' )
