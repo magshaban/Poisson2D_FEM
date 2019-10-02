@@ -16,3 +16,10 @@ def rhs_fn(x, y):
   return value
 
 
+#
+# The exact solution 
+#  
+def exact_fn(x, y):
+  value = x * ( 1.0 - x ) * y * ( 1.0 - y )
+  return value
+    

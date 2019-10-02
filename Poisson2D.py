@@ -38,7 +38,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from quad import *
 from funs import *
 
-element_linear_num = 10 
+element_linear_num = 10
 node_linear_num = element_linear_num + 1
 element_num = element_linear_num * element_linear_num
 node_num = node_linear_num * node_linear_num
@@ -48,15 +48,15 @@ b = 1.0
 
 grid = np.linspace ( a, b, node_linear_num )
 
-print( '' )
-print( '  Nodes along x axis:' )
-print( '' )
-
+#print( '' )
+#print( '  Nodes along x axis:' )
+#print( '' )
 #
-# to be modified from 1 to node_linear_num+1 wich gives 1,2,3,4,...
-#
-for i in range ( 0, node_linear_num ):
-   print( '  %d  %f' %( i, grid[i] ) )
+##
+## to be modified from 1 to node_linear_num+1 wich gives 1,2,3,4,...
+##
+#for i in range ( 0, node_linear_num ):
+#   print( '  %d  %f' %( i, grid[i] ) )
 
 #
 #  Set up a quadrature rule.
@@ -157,17 +157,8 @@ for ex in range ( 0, element_linear_num ):
              A[ne,ne] = A[ne,ne] + wq * ( vnex * vnex + vney * vney )
              rhs[ne]   = rhs[ne] + wq *   vne  * rhs_fn( xq, yq )     
      
-        
-#
-#to plot the mass matrix 
-#             
-fig, (ax1, ax2) = plt.subplots(1, 2)
-fig.suptitle('The Stiffness Matrix')
-ax1.matshow(A)
-ax2.spy(A)
-plt.show()
+A_in = A       
 
-#
 #  Modify the linear system to enforce the boundary conditions where
 #  X = 0 or 1 or Y = 0 or 1.
 #
@@ -181,7 +172,6 @@ for j in range ( 0, node_linear_num ):
         rhs[v] = 0.0
 
       v = v + 1
- 
 
 #
 #  Solve the linear system.
@@ -189,10 +179,6 @@ for j in range ( 0, node_linear_num ):
 u = la.solve(A, rhs)
 
 
-def exact_fn(x, y):
-  value = x * ( 1.0 - x ) * y * ( 1.0 - y )
-  return value
-    
 u_exact = exact_fn(x, y)
 
 #
@@ -207,7 +193,19 @@ for j in range ( 0, node_linear_num ):
      
       print ( ' %4d  %8f  %8f  %14g  %14g' % ( v, x[v], y[v], u[v], u_exact[v] ) )
       v = v + 1
-      
+ 
+
+#
+#to plot the mass matrix before adding the boundary conditions 
+             
+#             
+fig, (ax1, ax2) = plt.subplots(1, 2)
+fig.suptitle('The Stiffness Matrix')
+ax1.matshow(A_in)
+ax2.spy(A_in)
+plt.show()
+
+#     
 #to plot the mass matrix 
 fig, (ax1, ax2) = plt.subplots(1, 2)
 fig.suptitle('The Stiffness Matrix with BC contribution')
@@ -252,6 +250,11 @@ plt.imshow(z, extent=(np.amin(x_list),
 plt.show()
 
 
+print('#####################################################')
+print( '''  The Exact Solution 
+      U_exact =  xy(1-x)(1-y)
+  evaluated on each node is ''')
+print('#####################################################')
 
 #############################
 #
@@ -279,6 +282,24 @@ fig.colorbar(surf, shrink=0.7, aspect=9)
 plt.title('The exact solution $U_{exact}$')
 plt.show()
 
+#
+# Print the elements, listing the nodes in counterclockwise order.
+#
+#if(True):
+#   e = 0
+#   print ( '' )
+#   print ( '   The elements, listing the nodes in counterclockwise order' )
+#   print ( '' )
+#   for j in range ( 0, element_linear_num ):
+#      y = grid[j]
+#      for i in range ( 0, element_linear_num ):
+#          sw =   j       * node_linear_num + i
+#          se =   j       * node_linear_num + i + 1
+#          nw = ( j + 1 ) * node_linear_num + i
+#          ne = ( j + 1 ) * node_linear_num + i + 1
+#          print ( '%4d  %4d  %4d  %4d' % ( sw, se, ne, nw ) )
+#          e = e + 1
+#
 
 #
 #  Terminate.
