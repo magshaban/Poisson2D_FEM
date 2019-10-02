@@ -35,6 +35,9 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
+from quad import *
+from funs import *
+
 element_linear_num = 10 
 node_linear_num = element_linear_num + 1
 element_num = element_linear_num * element_linear_num
@@ -57,19 +60,8 @@ for i in range ( 0, node_linear_num ):
 
 #
 #  Set up a quadrature rule.
-#  This rule is defined on the reference interval [0,1].
 #
-quad_num = 3
-
-quad_point = np.array (( \
-    0.112701665379258311482073460022, \
-    0.5, \
-    0.887298334620741688517926539978 ) )
-
-quad_weight = np.array (( \
-    5.0 / 18.0, \
-    8.0 / 18.0, \
-    5.0 / 18.0 ))
+quad_num, quad_point, quad_weight = quad()
 #
 #  x and y for each node.
 #
@@ -83,18 +75,11 @@ for j in range (0, node_linear_num):
        y[v] = grid[j]
        v = v + 1
 
-#
-# The RHS function f(x)
-#
-def rhs_fn(x, y):
-
-  value = 2.0 * x * ( 1.0 - x ) + 2.0 * y * ( 1.0 - y )
-  return value
 
 #
 # Memory allocation.
 #
-A = np.zeros((node_num, node_num ))
+A = np.zeros((node_num, node_num))
 rhs = np.zeros(node_num)
 
 for ex in range ( 0, element_linear_num ):
@@ -225,7 +210,7 @@ for j in range ( 0, node_linear_num ):
       
 #to plot the mass matrix 
 fig, (ax1, ax2) = plt.subplots(1, 2)
-fig.suptitle('The Stiffness Matrix with BC')
+fig.suptitle('The Stiffness Matrix with BC contribution')
 ax1.matshow(A)
 ax2.spy(A)
 plt.show()
@@ -257,7 +242,7 @@ y_list = y
 z_list = u
 N = int(len(u) ** .5)
 z = u.reshape(N, N)
-plt.title('The solution $u$ from above')
+plt.title('The solution $U$ from above')
 plt.imshow(z, extent=(np.amin(x_list),
                       np.amax(x_list),
                       np.amin(y_list),
@@ -299,4 +284,4 @@ plt.show()
 #  Terminate.
 #
 print ( '' )
-print ( '  Normal end of execution.' )
+print ( '  >> Normal end of execution.' )
