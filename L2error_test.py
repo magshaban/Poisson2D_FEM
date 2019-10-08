@@ -1,31 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Solves Poission 2D equation using Finite element method
-# This is the MAin file. 
-#
-#  Problem description:
-#
-#    The PDE is defined for 0 < x < 1, 0 < y < 1:
-#      - uxx - uyy = f(x)
-#    with boundary conditions
-#      u(0,y) = 0,
-#      u(1,y) = 0,
-#      u(x,0) = 0,
-#      u(x,1) = 0.
-#
-#    The exact solution is:
-#      exact(x) = x * ( 1 - x ) * y * ( 1 - y ).
-#    The right hand side f(x) is:
-#      f(x) = 2 * x * ( 1 - x ) + 2 * y * ( 1 - y )
-#
-#  Modified: Q1 instead using P1 in the pervious code. 
-#    The unit square is divided into N by N squares.  Bilinear finite 
-#    element basis functions are defined, and the solution is sought as a
-#    piecewise linear combination of these basis functions.
-#
-# Author: Maged Shaaban 
-# magshaban@gmail.com
-#
+"""
+Created on Wed Oct  2 22:26:39 2019
+
+@author: maged
+"""
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,9 +17,8 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 from quad import *
 from funs import *
-from l2error import *
 
-element_linear_num = 20
+element_linear_num = 32
 node_linear_num = element_linear_num + 1
 element_num = element_linear_num * element_linear_num
 node_num = node_linear_num * node_linear_num
@@ -49,18 +28,8 @@ b = 1.0
 
 grid = np.linspace ( a, b, node_linear_num )
 
-#print( '' )
-#print( '  Nodes along x axis:' )
-#print( '' )
-#
-##
-## to be modified from 1 to node_linear_num+1 wich gives 1,2,3,4,...
-##
-#for i in range ( 0, node_linear_num ):
-#   print( '  %d  %f' %( i, grid[i] ) )
+e2 = 0.0
 
-#
-#  Set up a quadrature rule.
 #
 quad_num, quad_point, quad_weight = quad()
 #
@@ -76,6 +45,8 @@ for j in range (0, node_linear_num):
        y[v] = grid[j]
        v = v + 1
 
+
+#
 
 #
 # Memory allocation.
@@ -179,9 +150,18 @@ for j in range ( 0, node_linear_num ):
 #
 u = la.solve(A, rhs)
 
+# u_mat is the solution u in each matrix 
+u_mat = np.zeros((node_linear_num,node_linear_num))
 
+v = 0
+for j in range ( 0, node_linear_num ):
+     for i in range ( 0, node_linear_num ):
+         u_mat[i,j] = u[v]
+         v = v + 1
+
+print(u_mat)
 u_exact = exact_fn(x, y)
-
+   
 #
 #  Compare the solution and the error at the nodes.
 #
@@ -196,150 +176,92 @@ for j in range ( 0, node_linear_num ):
       v = v + 1
  
 
-#
-#to plot the mass matrix before adding the boundary conditions 
-             
-#             
-fig, (ax1, ax2) = plt.subplots(1, 2)
-fig.suptitle('The Stiffness Matrix')
-ax1.matshow(A_in)
-ax2.spy(A_in)
-plt.show()
-
-#     
-#to plot the mass matrix 
-fig, (ax1, ax2) = plt.subplots(1, 2)
-fig.suptitle('The Stiffness Matrix with BC contribution')
-ax1.matshow(A)
-ax2.spy(A)
-plt.show()
 
 
 
+# Quadrature defination 
+quad_num = 3
 
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-  
-# Make data.
-z =u
-# Plot the surface.
-surf = ax.plot_trisurf(x, y, z, cmap=cm.Spectral,linewidth=0, antialiased=False)
+quad_point = np.array (( \
+                        -0.774596669241483377035853079956, \
+                         0.0, \
+                         0.774596669241483377035853079956 ) )
 
-# Customize the z axis.
-ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-# Add a color bar which maps values to colors.
-fig.colorbar(surf, shrink=0.7, aspect=9)
-plt.title('The solution $U$')  
-plt.show()
-
-from matplotlib.colors import LogNorm
-
-x_list = x
-y_list = y
-z_list = u
-N = int(len(u) ** .5)
-z = u.reshape(N, N)
-plt.title('The solution $U$ from above')
-plt.imshow(z, extent=(np.amin(x_list),
-                      np.amax(x_list),
-                      np.amin(y_list),
-                      np.amax(y_list)),
-        norm=LogNorm(), aspect='auto')
-#plt.colorbar()
-plt.show()
-
-
-print('#####################################################')
-print( '''  The Exact Solution 
-      U_exact =  xy(1-x)(1-y)
-  evaluated on each node is ''')
-print('#####################################################')
-
-#############################
-#
-# The Exact solution 
-#
-
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-  
-## Make data.
-z = u_exact
-#############################
-#
-# The Exact solution 
-#
-# Plot the surface.
-surf = ax.plot_trisurf(x, y, z, cmap=cm.Spectral,linewidth=0, antialiased=False)
-
-# Customize the z axis.
-ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-# Add a color bar which maps values to colors.
-fig.colorbar(surf, shrink=0.7, aspect=9)
-plt.title('The exact solution $U_{exact}$')
-plt.show()
+quad_weight = np.array (( \
+                         5.0 / 9.0, \
+                         8.0 / 9.0, \
+                         5.0 / 9.0 ))
 
 #
-# Print the elements, listing the nodes in counterclockwise order.
+#  x and y for each node.
 #
-#if(True):
-#   e = 0
-#   print ( '' )
-#   print ( '   The elements, listing the nodes in counterclockwise order' )
-#   print ( '' )
-#   for j in range ( 0, element_linear_num ):
-#      y = grid[j]
-#      for i in range ( 0, element_linear_num ):
-#          sw =   j       * node_linear_num + i
-#          se =   j       * node_linear_num + i + 1
-#          nw = ( j + 1 ) * node_linear_num + i
-#          ne = ( j + 1 ) * node_linear_num + i + 1
-#          print ( '%4d  %4d  %4d  %4d' % ( sw, se, ne, nw ) )
-#          e = e + 1
-#
-xerror = np.zeros(node_linear_num*node_linear_num)
-error = np.zeros(node_linear_num*node_linear_num)
+x = np.zeros( node_linear_num * node_linear_num)  
+y = np.zeros( node_linear_num * node_linear_num)  
+
 v = 0
-for j in range ( 0, node_linear_num ):
-     for i in range ( 0, node_linear_num ):
-             error [v]= u[v]- u_exact[v]
-             xerror[v]= v
-             v = v + 1
+for j in range (0, node_linear_num):   
+   for i in range (0, node_linear_num):              
+       x[v]= grid[i]
+       y[v] = grid[j]
+       v = v + 1
+       
+for ex in range ( 0, element_linear_num ):
 
- 
-plt.plot(xerror,error,'b')
-plt.xlabel('Node')
-plt.ylabel('$Error$')
-plt.grid()
-plt.show()   
+   w = ex
+   e = ex + 1
 
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-z =error
+   xw = grid[w]
+   xe = grid[e]
+   
+   for ey in range ( 0, element_linear_num ):
 
-surf = ax.plot_trisurf(x, y, z, cmap=cm.Spectral,linewidth=0, antialiased=False)
+     s = ey
+     n = ey + 1
 
-# Customize the z axis.
-ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('  %.05f'))
-
-# Add a color bar which maps values to colors.
-fig.colorbar(surf, shrink=0.7, aspect=9)
-plt.title('$Error$')
-plt.show()
-
-# To evaluate the L2 error 
-L2_error = L2_error(element_linear_num, u)
-print('\n\n\n#####################################################')
-print('\n        The L2 error = ', L2_error)
-print('\n#####################################################')
+     ys = grid[s]
+     yn = grid[n]
+           
+     sw =   ey       * node_linear_num + ex
+     se =   ey       * node_linear_num + ex + 1
+     
+     nw = ( ey + 1 ) * node_linear_num + ex
+     ne = ( ey + 1 ) * node_linear_num + ex + 1
 
 #
-#  Terminate.
+#  The 2D quadrature rule is the 'product' of X and Y copies of the 1D rule.
 #
-print ( '' )
-print ( '  >> Normal end of execution.' )
+     for qx in range (0, quad_num):      
+         xq = (( 1.0 - quad_point[qx] ) * xw
+             + ( 1.0 + quad_point[qx] ) * xe ) / 2.0
+         
+         for qy in range(0,quad_num):
+             yq = (( 1.0 - quad_point[qy] ) * ys
+                 + ( 1.0 + quad_point[qy] ) * yn ) / 2.0
+                   
+             wq = quad_weight[qx] * quad_weight[qy] * (xe - xw) / 2.0 * (yn - ys) / 2.0
+                 
+#
+#  Evaluate all four basis functions, and their X and Y derivatives.
+#
+             vsw  = ( xe - xq ) / ( xe - xw ) * ( yn - yq ) / ( yn - ys )
+             vse  = ( xq - xw ) / ( xe - xw ) * ( yn - yq ) / ( yn - ys )
+             vnw  = ( xe - xq ) / ( xe - xw ) * ( yq - ys ) / ( yn - ys ) 
+             vne  = ( xq - xw ) / ( xe - xw ) * ( yq - ys ) / ( yn - ys )
+
+             uq = u_mat[w,s] * vsw + u_mat[e,s] * vse + u_mat[w,n] * vnw + u_mat[e,n] * vne
+             #print(w,n,e,s)
+             eq = exact_fn(xq, yq)
+             
+             e2 = e2 + wq * (uq - eq) *  (uq - eq)
+            
+             
+print('\n   The L2 error = ', e2)
+
+
+
+
+
+
+
+
+       
