@@ -261,31 +261,24 @@ print( '''  The Exact Solution
   evaluated on each node is ''')
 print('#####################################################')
 
-#############################
-#
-# The Exact solution 
-#
 
+#
+# plot the Exact solution 
+#
 fig = plt.figure()
-ax = fig.gca(projection='3d')
-  
-## Make data.
+ax = fig.gca(projection='3d') 
+# Make data.
 z = u_exact
-#############################
-#
-# The Exact solution 
-#
 # Plot the surface.
 surf = ax.plot_trisurf(x, y, z, cmap=cm.Spectral,linewidth=0, antialiased=False)
-
 # Customize the z axis.
 ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
 # Add a color bar which maps values to colors.
 fig.colorbar(surf, shrink=0.7, aspect=9)
 plt.title('The exact solution $U_{exact}$')
 plt.show()
+
 
 #
 # Print the elements, listing the nodes in counterclockwise order.
@@ -305,6 +298,12 @@ plt.show()
 #          print ( '%4d  %4d  %4d  %4d' % ( sw, se, ne, nw ) )
 #          e = e + 1
 #
+
+
+#
+# Plot the Error 
+#
+
 xerror = np.zeros(node_linear_num*node_linear_num)
 error = np.zeros(node_linear_num*node_linear_num)
 v = 0

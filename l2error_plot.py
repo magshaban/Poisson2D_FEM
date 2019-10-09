@@ -10,17 +10,18 @@ part of <poisson2D.py>
 
 """
 import numpy as np 
+import matplotlib.pyplot as plt
 
 from solver import * 
 from l2error import *
 
 
-start = 15
-stop = 60
-step = 2
+start = 2
+stop = 7
+step = 1
 
 v = 0
-for i in range(start,stop,step):
+for k in range(start,stop,step):
     v = v + 1
     
 e2 = np.zeros(v)
@@ -29,11 +30,13 @@ node_num = np.zeros(v)
 elements = np.zeros(v)
 
 print ( '' )
-print ( '   Total Nodes    Total Elements           h               L2_error' )
+print ( '   Total Nodes    Total Elements           h                L2_error' )
 print ( '' )
 
 v = 0
-for i in range(start,stop,step):
+for k in range(start,stop,step):
+    i = 2**k
+    print ('i=',i)
     elements[v]= i * i
     u,h[v],node_num[v] = solver(element_linear_num = i)
     e2[v] = L2_error(element_linear_num = i,u = u)
