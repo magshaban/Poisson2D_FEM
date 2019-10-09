@@ -44,18 +44,7 @@ def L2_error(element_linear_num,u):
                                  8.0 / 9.0, \
                                  5.0 / 9.0 ))
         
-        #
-        #  x and y for each node.
-        #
-#        x = np.zeros( node_linear_num * node_linear_num)
-#        y = np.zeros( node_linear_num * node_linear_num)
-#        
-#        v = 0
-#        for j in range (0, node_linear_num):
-#           for i in range (0, node_linear_num):
-#               x[v]= grid[i]
-#               y[v] = grid[j]
-#               v = v + 1
+    
         
         for ex in range ( 0, element_linear_num ):
         
@@ -109,6 +98,5 @@ def L2_error(element_linear_num,u):
     
         e2 = np.sqrt(e2)
         return e2
- #print('\n   The L2 error = ', e2)   
     
     
