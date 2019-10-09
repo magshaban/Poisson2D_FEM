@@ -254,7 +254,7 @@ for ex in range ( 0, element_linear_num ):
              
              e2 = e2 + wq * (uq - eq) *  (uq - eq)
             
-             
+e2 = np.sqrt(e2)             
 print('\n   The L2 error = ', e2)
 
 

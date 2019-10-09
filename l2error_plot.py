@@ -29,7 +29,7 @@ node_num = np.zeros(v)
 elements = np.zeros(v)
 
 print ( '' )
-print ( '   Total Nodes    Total Elements            h               L2_error' )
+print ( '   Total Nodes    Total Elements           h               L2_error' )
 print ( '' )
 
 v = 0
@@ -37,7 +37,8 @@ for i in range(start,stop,step):
     elements[v]= i * i
     u,h[v],node_num[v] = solver(element_linear_num = i)
     e2[v] = L2_error(element_linear_num = i,u = u)
-    print ( '      %4d            %4d              %8f        %14g' % ( node_num[v],elements[v], h[v], e2[v] ) )
+    print ( '      %4d            %4d              %8f        %14g' 
+           % ( node_num[v],elements[v], h[v], e2[v] ) )
     v = v + 1 
 
 print ( '' )

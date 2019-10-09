@@ -4,7 +4,7 @@
 # This is the Main file <Poisson2D.py>. 
 #
 #  -To calculate the Sloution L2 error for diffrent spacing h use <l2error_plot.py>.
-#  -The file <solver.py> contains a simple solver for this problem. 
+#  -The file <solver.py> contains a quick solver function for this problem. 
 #  -The file <l2error.py> is the solution l2 error evaluation function. 
 #
 #  Problem description:
@@ -74,7 +74,7 @@ x = np.zeros( node_linear_num * node_linear_num)
 y = np.zeros( node_linear_num * node_linear_num)  
 
 v = 0
-for j in range (0, node_linear_num):   
+for j in range ( 0, node_linear_num ):   
    for i in range (0, node_linear_num):              
        x[v]= grid[i]
        y[v] = grid[j]
@@ -111,10 +111,10 @@ for ex in range ( 0, element_linear_num ):
 #
 #  The 2D quadrature rule is the 'product' of X and Y copies of the 1D rule.
 #
-     for qx in range (0, quad_num):      
+     for qx in range ( 0, quad_num ):      
          xq = xw + quad_point[qx] * (xe - xw)
          
-         for qy in range(0,quad_num):
+         for qy in range( 0,quad_num ):
              yq = ys + quad_point[qy] * (yn - ys)
              wq = quad_weight[qx] * quad_weight[qy] * (xe - xw) * (yn - ys)     
 #
@@ -201,21 +201,21 @@ for j in range ( 0, node_linear_num ):
  
 
 #
-#to plot the mass matrix before adding the boundary conditions 
-             
+#to plot the mass matrix before adding the boundary conditions             
 #             
-fig, (ax1, ax2) = plt.subplots(1, 2)
-fig.suptitle('The Stiffness Matrix')
-ax1.matshow(A_in)
-ax2.spy(A_in)
+fig, (ax1, ax2) = plt.subplots( 1, 2 )
+fig.suptitle( 'The Stiffness Matrix' )
+ax1.matshow( A_in )
+ax2.spy( A_in )
 plt.show()
 
 #     
 #to plot the mass matrix 
+#
 fig, (ax1, ax2) = plt.subplots(1, 2)
 fig.suptitle('The Stiffness Matrix with BC contribution')
-ax1.matshow(A)
-ax2.spy(A)
+ax1.matshow( A )
+ax2.spy( A )
 plt.show()
 
 
