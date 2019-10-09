@@ -4,6 +4,10 @@
 Created on Tue Oct  8 15:42:05 2019
 
 @author: maged
+
+part of <poisson2D.py> 
+
+
 """
 import numpy as np 
 
@@ -12,7 +16,7 @@ from l2error import *
 
 
 start = 15
-stop = 70
+stop = 60
 step = 2
 
 v = 0

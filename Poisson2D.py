@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Solves Poission 2D equation using Finite element method
-# This is the MAin file. 
+# This is the Main file <Poisson2D.py>. 
+#
+#  -To calculate the Sloution L2 error for diffrent spacing h use <l2error_plot.py>.
+#  -The file <solver.py> contains a simple solver for this problem. 
+#  -The file <l2error.py> is the solution l2 error evaluation function. 
 #
 #  Problem description:
 #

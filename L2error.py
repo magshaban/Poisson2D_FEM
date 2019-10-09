@@ -107,7 +107,7 @@ def L2_error(element_linear_num,u):
                      e2 = e2 + wq * (uq - eq) *  (uq - eq)    
     
     
-    
+        e2 = np.sqrt(e2)
         return e2
  #print('\n   The L2 error = ', e2)   
     
