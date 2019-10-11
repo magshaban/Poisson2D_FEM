@@ -12,7 +12,7 @@ Created on Wed Oct  1 23:47:19 2019
 #
 def rhs_fn(x, y):
 
-  value = 2.0 * x * (1.0 - x) + 2.0 * y * (1.0 - y)
+  value = 2.0 * x * ( 1.0 - x ) + 2.0 * y * ( 1.0 - y )
   return value
 
 
@@ -22,4 +22,19 @@ def rhs_fn(x, y):
 def exact_fn(x, y):
   value = x * ( 1.0 - x ) * y * ( 1.0 - y )
   return value
-    
+
+
+#
+# The exact solution 
+#  
+def exact_fnx(x, y):
+  value = ( 1.0 - 2.0 * x ) * y * ( 1.0 - y )
+  return value    
+
+
+#
+# The exact solution 
+#  
+def exact_fny(x, y):
+  value = x * ( 1.0 - x ) *  ( 1.0 - 2.0 * y )
+  return value

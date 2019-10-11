@@ -3,9 +3,10 @@
 # Solves Poission 2D equation using Finite element method
 # This is the Main file <Poisson2D.py>. 
 #
-#  -To calculate the Sloution L2 error for diffrent spacing h use <l2error_plot.py>.
+#  -To plot the Sloution L2 and H1 errors for diffrent spacing h use <l2error_plot.py>.
 #  -The file <solver.py> contains a quick solver function for this problem. 
-#  -The file <l2error.py> is the solution l2 error evaluation function. 
+#  -The file <l2error.py> is the solution L2 error evaluation function. 
+#  -The file <h1error.py> is the solution H1 error evaluation function. 
 #
 #  Problem description:
 #
@@ -38,12 +39,15 @@ import scipy.linalg as la
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from matplotlib.colors import LogNorm
+
 
 from quad import *
 from funs import *
 from l2error import *
+from h1error import *
 
-element_linear_num = 20
+element_linear_num = 10
 node_linear_num = element_linear_num + 1
 element_num = element_linear_num * element_linear_num
 node_num = node_linear_num * node_linear_num
@@ -53,20 +57,41 @@ b = 1.0
 
 grid = np.linspace ( a, b, node_linear_num )
 
-#print( '' )
-#print( '  Nodes along x axis:' )
-#print( '' )
+print( '' )
+print( '  Nodes along x axis:' )
+print( '' )
+
 #
-##
-## to be modified from 1 to node_linear_num+1 wich gives 1,2,3,4,...
-##
-#for i in range ( 0, node_linear_num ):
-#   print( '  %d  %f' %( i, grid[i] ) )
+# to be modified from 1 to node_linear_num+1 wich gives 1,2,3,4,...
+#
+for i in range ( 0, node_linear_num ):
+   print( '  %d  %f' %( i, grid[i] ) )
+
+
+#
+# Print the elements, listing the nodes in counterclockwise order.
+#
+if(True):
+   e = 0
+   print ( '' )
+   print ( '   The elements, listing the nodes in counterclockwise order' )
+   print ( '' )
+   for j in range ( 0, element_linear_num ):
+      y = grid[j]
+      for i in range ( 0, element_linear_num ):
+          sw =   j       * node_linear_num + i
+          se =   j       * node_linear_num + i + 1
+          nw = ( j + 1 ) * node_linear_num + i
+          ne = ( j + 1 ) * node_linear_num + i + 1
+          print ( '%4d  %4d  %4d  %4d' % ( sw, se, ne, nw ) )
+          e = e + 1
 
 #
 #  Set up a quadrature rule.
 #
 quad_num, quad_point, quad_weight = quad()
+
+
 #
 #  x and y for each node.
 #
@@ -79,7 +104,6 @@ for j in range ( 0, node_linear_num ):
        x[v]= grid[i]
        y[v] = grid[j]
        v = v + 1
-
 
 #
 # Memory allocation.
@@ -162,8 +186,9 @@ for ex in range ( 0, element_linear_num ):
              A[ne,ne] = A[ne,ne] + wq * ( vnex * vnex + vney * vney )
              rhs[ne]   = rhs[ne] + wq *   vne  * rhs_fn( xq, yq )     
      
-A_in = A       
+A_in = A    # It will be used to plot the stifness matrix without BC.   
 
+#
 #  Modify the linear system to enforce the boundary conditions where
 #  X = 0 or 1 or Y = 0 or 1.
 #
@@ -219,26 +244,19 @@ ax2.spy( A )
 plt.show()
 
 
-
-
 fig = plt.figure()
-ax = fig.gca(projection='3d')
-  
+ax = fig.gca(projection='3d')  
 # Make data.
 z =u
 # Plot the surface.
 surf = ax.plot_trisurf(x, y, z, cmap=cm.Spectral,linewidth=0, antialiased=False)
-
 # Customize the z axis.
 ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
 # Add a color bar which maps values to colors.
 fig.colorbar(surf, shrink=0.7, aspect=9)
 plt.title('The solution $U$')  
 plt.show()
-
-from matplotlib.colors import LogNorm
 
 x_list = x
 y_list = y
@@ -255,11 +273,10 @@ plt.imshow(z, extent=(np.amin(x_list),
 plt.show()
 
 
-print('#####################################################')
+print('#####################################################\n\n')
 print( '''  The Exact Solution 
       U_exact =  xy(1-x)(1-y)
   evaluated on each node is ''')
-print('#####################################################')
 
 
 #
@@ -279,29 +296,10 @@ fig.colorbar(surf, shrink=0.7, aspect=9)
 plt.title('The exact solution $U_{exact}$')
 plt.show()
 
+print( '\n\n####################################################' )
 
 #
-# Print the elements, listing the nodes in counterclockwise order.
-#
-#if(True):
-#   e = 0
-#   print ( '' )
-#   print ( '   The elements, listing the nodes in counterclockwise order' )
-#   print ( '' )
-#   for j in range ( 0, element_linear_num ):
-#      y = grid[j]
-#      for i in range ( 0, element_linear_num ):
-#          sw =   j       * node_linear_num + i
-#          se =   j       * node_linear_num + i + 1
-#          nw = ( j + 1 ) * node_linear_num + i
-#          ne = ( j + 1 ) * node_linear_num + i + 1
-#          print ( '%4d  %4d  %4d  %4d' % ( sw, se, ne, nw ) )
-#          e = e + 1
-#
-
-
-#
-# Plot the Error 
+# Plotting the Error 
 #
 
 xerror = np.zeros(node_linear_num*node_linear_num)
@@ -323,24 +321,28 @@ plt.show()
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 z =error
-
 surf = ax.plot_trisurf(x, y, z, cmap=cm.Spectral,linewidth=0, antialiased=False)
-
 # Customize the z axis.
 ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter('  %.05f'))
-
 # Add a color bar which maps values to colors.
 fig.colorbar(surf, shrink=0.7, aspect=9)
 plt.title('$Error$')
 plt.show()
 
-# To evaluate the L2 error 
-L2_error = L2_error(element_linear_num, u)
-print('\n\n\n#####################################################')
-print('\n        The L2 error = ', L2_error)
-print('\n#####################################################')
+#
+# Errors
+#
 
+# To evaluate the L2 error 
+print( '\n\n' )
+print('\n        The L2 error = ', L2_error( element_linear_num, u ) )
+print(  )   
+# To evaluate the L2 error 
+print('\n        The H1 error = ', H1_error( element_linear_num, u ) )
+print( '\n#####################################################' )
+
+  
 #
 #  Terminate.
 #
