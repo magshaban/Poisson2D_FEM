@@ -29,7 +29,7 @@
 #    piecewise linear combination of these basis functions.
 #
 # Author: Maged Shaaban 
-# magshaban@gmail.com
+# magshaban[at]gmail.com
 #
 
 import numpy as np
